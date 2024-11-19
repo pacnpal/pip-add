@@ -16,8 +16,12 @@ A command-line tool that combines package installation and requirements.txt mana
 ## Installation
 
 ```bash
-# Clone the repository
+# Install from PyPI
 pip install pip-add
+
+# Or install latest version
+pip install --upgrade pip-add
+```
 
 ## Usage
 
@@ -117,25 +121,21 @@ The tool is designed to safely handle dependencies:
 - **Analysis**: Shows which dependencies were kept and why
 - **Protection**: Prevents breaking other installed packages
 
-## File Structure
-
-```
-pip_add/
-├── setup.py          # Package configuration
-├── pip_add/
-│   ├── __init__.py   # Package initialization
-│   └── cli.py        # Main implementation
-```
-
 ## Requirements
 
 - Python 3.6+
 - pip
 - setuptools
 
-## Development Setup
+## Development
+
+### Local Setup
 
 ```bash
+# Clone the repository
+git clone https://github.com/PacNPal/pip-add.git
+cd pip-add
+
 # Create virtual environment
 python -m venv venv
 source venv/bin/activate  # or `venv\Scripts\activate` on Windows

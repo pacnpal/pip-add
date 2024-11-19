@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="pip-add",
-    version="0.1.0",
+    version="0.1.1",
     packages=find_packages(),
     install_requires=[
         "pip",
@@ -15,7 +15,7 @@ setup(
     },
     author="PacNPal",
     author_email="pac@pacnp.al",
-    description="A CLI tool to install packages and add them to requirements.txt",
+    description="A CLI tool to install packages and manage requirements.txt in one command",
     long_description=open('README.md').read(),
     long_description_content_type="text/markdown",
     url="https://github.com/PacNPal/pip-add",
