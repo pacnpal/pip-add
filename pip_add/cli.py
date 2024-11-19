@@ -4,14 +4,27 @@ import subprocess
 import pkg_resources
 import argparse
 from pkg_resources import working_set
+from .utils import find_requirements as utils_find_requirements
 
-def find_requirements():
-    """Find requirements.txt in current directory or create it"""
-    req_file = 'requirements.txt'
+def find_requirements(custom_path=None):
+    """Find requirements.txt using utils or use custom path"""
+    if custom_path:
+        # If custom path provided, ensure directory exists
+        os.makedirs(os.path.dirname(os.path.abspath(custom_path)), exist_ok=True)
+        if not os.path.exists(custom_path):
+            with open(custom_path, 'w') as f:
+                f.write('# Python dependencies\n')
+        return custom_path
     
-    if not os.path.exists(req_file):
-        with open(req_file, 'w') as f:
-            f.write('# Python dependencies\n')
+    # Use utils.find_requirements() to search for requirements files
+    req_file, found_files = utils_find_requirements()
+    if len(found_files) > 1:
+        print("\nℹ️  Found multiple requirements files:")
+        for f in found_files:
+            print(f"  - {f}")
+        print(f"\nUsing: {req_file}")
+        print("To use a specific file, run the command with -f/--requirements-file option:")
+        print(f"Example: pip-add -f {found_files[0]} <package>")
     
     return req_file
 
@@ -168,10 +181,12 @@ def main():
                       help='Use == instead of >= for version specification')
     parser.add_argument('-r', '--remove', action='store_true',
                       help='Remove package(s) and their entries from requirements.txt')
+    parser.add_argument('-f', '--requirements-file',
+                      help='Path to custom requirements.txt file')
     
     args = parser.parse_args()
     package = args.package
-    req_file = find_requirements()
+    req_file = find_requirements(args.requirements_file)
     
     try:
         if args.remove:
