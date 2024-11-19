@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="pip-add",
-    version="0.2.2",
+    version="0.2.3",
     packages=find_packages(),
     install_requires=[
         "pip",
@@ -23,6 +23,7 @@ setup(
         "Development Status :: 4 - Beta",
         "Environment :: Console",
         "Intended Audience :: Developers",
+        "Intended Audience :: Information Technology",
         "Intended Audience :: System Administrators",
         "License :: OSI Approved :: MIT License",
         "Natural Language :: English",
@@ -37,7 +38,6 @@ setup(
         "Topic :: System :: Software Distribution",
         "Topic :: System :: Systems Administration",
         "Topic :: Utilities",
-        "Framework :: pip",
     ],
     python_requires=">=3.11",
 )
