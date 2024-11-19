@@ -2,6 +2,8 @@
 
 A command-line tool that combines package installation and requirements.txt management. Install, update, or remove Python packages and their dependencies with automatic requirements.txt handling.
 
+Compatible with Python 3.11, 3.12, and 3.13.
+
 ## Features
 
 - Single command for package management and requirements.txt updates
@@ -12,6 +14,7 @@ A command-line tool that combines package installation and requirements.txt mana
 - Clean, informative output with version information
 - Preserves requirements.txt comments and formatting
 - Creates requirements.txt if it doesn't exist
+- Full support for Python 3.11, 3.12, and 3.13
 
 ## Installation
 
@@ -123,7 +126,7 @@ The tool is designed to safely handle dependencies:
 
 ## Requirements
 
-- Python 3.6+
+- Python 3.11, 3.12, or 3.13
 - pip
 - setuptools
 
