@@ -20,12 +20,25 @@ Compatible with Python 3.11, 3.12, and 3.13.
 
 ## Installation
 
+It's recommended to install pip-add within a virtual environment to avoid conflicts with system packages:
+
 ```bash
+# Create and activate virtual environment
+python -m venv venv
+source venv/bin/activate  # or `venv\Scripts\activate` on Windows
+
 # Install from PyPI
 pip install pip-add
 
 # Or install latest version
 pip install --upgrade pip-add
+```
+
+For global installation (use with caution), you can install with pipx:
+
+```bash
+# Install globally using pipx
+pipx install pip-add
 ```
 
 ## Usage
