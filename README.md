@@ -43,7 +43,7 @@ pipx install pip-add
 
 ## Usage
 
-### Installation
+### Package Installation
 
 ```bash
 # Basic package installation
@@ -133,7 +133,7 @@ pip-add -r -f requirements/dev.txt requests
 
 ## Command Line Options
 
-```
+```bash
 pip-add [-h] [-d] [-e] [-r] [-f REQUIREMENTS_FILE] package
 
 positional arguments:
@@ -194,29 +194,15 @@ The tool is designed to safely handle dependencies:
 - pip
 - setuptools
 
-## Development
-
-### Local Setup
-
-```bash
-# Clone the repository
-git clone https://github.com/PacNPal/pip-add.git
-cd pip-add
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # or `venv\Scripts\activate` on Windows
-
-# Install in development mode
-pip install -e .
-```
-
 ## Common Scenarios
 
 ### New Project
 
 ```bash
 # First time setup
+pip-add flask
+# Creates requirements.txt and adds Flask
+
 pip-add -d flask
 # Creates requirements.txt and adds Flask with dependencies
 
