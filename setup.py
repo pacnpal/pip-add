@@ -39,5 +39,5 @@ setup(
         "Topic :: System :: Systems Administration",
         "Topic :: Utilities",
     ],
-    python_requires=">=3.11",
+    python_requires=">=3.9",
 )
