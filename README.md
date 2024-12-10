@@ -2,7 +2,7 @@
 
 A command-line tool that combines package installation and requirements.txt management. Install, update, or remove Python packages and their dependencies with automatic requirements.txt handling.
 
-Compatible with Python 3.11, 3.12, and 3.13.
+Compatible with Python 3.9, 3.10, 3.11, 3.12, and 3.13.
 
 [![codecov](https://codecov.io/gh/pacnpal/pip-add/graph/badge.svg?token=ATTR6TXNUL)](https://codecov.io/gh/pacnpal/pip-add)
 
@@ -18,7 +18,7 @@ Compatible with Python 3.11, 3.12, and 3.13.
 - Creates requirements.txt if it doesn't exist
 - Support for custom requirements file paths
 - Smart detection of multiple requirements files
-- Full support for Python 3.11, 3.12, and 3.13
+- Full support for Python 3.8, 3.9, 3.10, 3.11, 3.12, and 3.13
 
 ## Installation
 
