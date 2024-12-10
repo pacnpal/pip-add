@@ -4,6 +4,8 @@ A command-line tool that combines package installation and requirements.txt mana
 
 Compatible with Python 3.11, 3.12, and 3.13.
 
+[![codecov](https://codecov.io/gh/pacnpal/pip-add/graph/badge.svg?token=ATTR6TXNUL)](https://codecov.io/gh/pacnpal/pip-add)
+
 ## Features
 
 - Single command for package management and requirements.txt updates
