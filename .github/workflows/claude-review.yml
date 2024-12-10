@@ -1,0 +1,144 @@
+name: Claude Code Review
+
+permissions:
+  contents: read
+  pull-requests: write
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'Pull Request Number'
+        required: true
+        type: string
+
+jobs:
+  code-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get PR number
+        id: pr-number
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "number=${{ inputs.pr_number }}" >> $GITHUB_OUTPUT
+          else
+            echo "number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Get PR details
+        if: github.event_name == 'workflow_dispatch'
+        id: pr-details
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.name,
+              pull_number: ${{ inputs.pr_number }}
+            });
+            console.log(`Base SHA: ${pr.data.base.sha}`);
+            console.log(`Head SHA: ${pr.data.head.sha}`);
+            return {
+              base_sha: pr.data.base.sha,
+              head_sha: pr.data.head.sha
+            }
+
+      - name: Get changed files
+        id: changed-files
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            BASE_SHA=${{ fromJSON(steps.pr-details.outputs.result).base_sha }}
+            HEAD_SHA=${{ fromJSON(steps.pr-details.outputs.result).head_sha }}
+          else
+            BASE_SHA=${{ github.event.pull_request.base.sha }}
+            HEAD_SHA=${{ github.event.pull_request.head.sha }}
+          fi
+          
+          # Get the diff and save to a file
+          git diff $BASE_SHA..$HEAD_SHA > changes.diff
+          
+          # Create a filtered version without ignored files
+          cat changes.diff | grep -v -E '(package-lock.json|yarn.lock|node_modules|\.md$|\.json$)' | grep -E '\.(js|ts|py|cpp|h|java|cs)$' > filtered_changes.diff
+          
+          # Store the size of the diff
+          echo "diff_size=$(stat -f%z filtered_changes.diff)" >> $GITHUB_OUTPUT
+
+      - name: Analyze code with Claude
+        if: steps.changed-files.outputs.diff_size != '0'
+        id: analysis
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          DIFF_CONTENT=$(cat filtered_changes.diff)
+          
+          # Prepare the API request
+          PROMPT="You are performing a code review. Please analyze this code diff and provide a thorough review that covers:
+
+          1. Potential conflicts with existing codebase
+          2. Code correctness and potential bugs
+          3. Security vulnerabilities or risks
+          4. Performance implications
+          5. Maintainability and readability issues
+          6. Adherence to best practices and coding standards
+          7. Suggestions for improvements
+
+          For each issue found:
+          - Explain the problem clearly
+          - Rate the severity (Critical/High/Medium/Low)
+          - Provide specific recommendations for fixes
+          - Include code examples where helpful
+
+          If no issues are found in a particular area, explicitly state that.
+
+          Here is the code diff to review:
+
+          \`\`\`
+          $DIFF_CONTENT
+          \`\`\`"
+
+          # Make the API request
+          RESPONSE=$(curl -s https://api.anthropic.com/v1/messages \
+            -H "Content-Type: application/json" \
+            -H "x-api-key: $ANTHROPIC_API_KEY" \
+            -H "anthropic-version: 2023-06-01" \
+            -d "{
+              \"model\": \"claude-3-sonnet-20240229\",
+              \"max_tokens\": 4096,
+              \"temperature\": 0.7,
+              \"messages\": [{
+                \"role\": \"user\",
+                \"content\": \"$PROMPT\"
+              }]
+            }")
+          
+          # Extract the review content from the response
+          REVIEW=$(echo $RESPONSE | jq -r '.content[0].text')
+          
+          # Escape the review content for GitHub Actions
+          REVIEW="${REVIEW//'%'/'%25'}"
+          REVIEW="${REVIEW//$'\n'/'%0A'}"
+          REVIEW="${REVIEW//$'\r'/'%0D'}"
+          
+          # Save the review to the output
+          echo "review=$REVIEW" >> $GITHUB_OUTPUT
+
+      - name: Post review comment
+        if: steps.changed-files.outputs.diff_size != '0'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const review = `${{ steps.analysis.outputs.review }}`;
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.name,
+              issue_number: ${{ steps.pr-number.outputs.number }},
+              body: `# Claude Code Review\n\n${review}`
+            });
