@@ -1,6 +1,5 @@
-# Release 0.2.6
+## Release Notes
 
-## Changes
+### 0.2.6
+
 - Added support for Python 3.14
-
-Date: 2026-01-23 11:51:45
