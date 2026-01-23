@@ -1,5 +1,3 @@
-## Release Notes
+### Release 0.2.6
 
-### 0.2.6
-
-- Added support for Python 3.14
+Support for Python 3.14 included in this release.
